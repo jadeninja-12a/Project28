@@ -4,7 +4,9 @@ const Engine = Matter.Engine;
 const World = Matter.World;
 const Bodies = Matter.Bodies;
 const Body = Matter.Body;
+const Constraint = Matter.Constraint;
 
+var rubberband;
 function preload()
 {
 	
@@ -16,6 +18,7 @@ function setup() {
 
 	engine = Engine.create();
 	world = engine.world;
+	t = false;
 
 	//packageBody = Bodies.circle(width/2 , 200 , 5 , {restitution:1.5, isStatic:false});
 	//World.add(world, packageBody);
@@ -23,26 +26,35 @@ function setup() {
 
 	ground = new Ground(20);
 
-	paper = new Paper(60, 500, 30);
+	paper = new Paper(100, 100, 30);
 
 	Engine.run(engine);
-    dustbin  = new Dustbin(650, 590, 150, 180, 10);
+	dustbin  = new Dustbin(650, 590, 150, 180, 10);
+	rubberband = new Rubberband(paper.body, {x:150, y:300});
 }
 
 
 function draw() {
   rectMode(CENTER);
   background(0);
+  Engine.update(engine);
   stroke("grey");
-  paper.display();
   ground.display();
   dustbin.display();
-}
-
-function keyPressed(){
-	if(keyCode === UP_ARROW){
-		Matter.Body.applyForce(paper.body, paper.body.position,{x:30,y:-50} );
+  if(t){
+	Matter.Body.setPosition(paper.body, {x:mouseX, y:mouseY});
 	}
+	rubberband.display();
+	paper.display();
+}
+function mouseDragged(){
+
+t = true;
+
+}
+function mouseReleased(){
+ t = false;
+ rubberband.fly();
 }
 
 
